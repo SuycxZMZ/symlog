@@ -64,7 +64,7 @@ public:
             throw std::exception();
         }
 
-        // 还用初始化吗 ?
+        // 初始化每一个指针 heap_timer*
         for( int i = 0; i < capacity; ++i )
         {
             array[i] = NULL;
@@ -220,6 +220,20 @@ public:
             tmp = array[0];
         }
     }
+
+    void adjust_timer( heap_timer* timer, int socketfd)
+    {
+        // 找到timer对应的索引
+        for (int i = 0; i < cur_size; i ++)
+        {
+            if ( (array[i]->user_data)->sockfd == socketfd )
+            {
+                percolate_down(i);
+                return;
+            }
+        }
+    }
+
     bool empty() const { return cur_size == 0; }
 
 private:
@@ -274,6 +288,7 @@ private:
         delete [] array;
         array = temp;
     }
+
 
 private:
     // 堆数组, 每个元素都是一个指向 heap_timer 类型元素的指针, 节省空间
