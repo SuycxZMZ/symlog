@@ -6,7 +6,7 @@ namespace symlog
 namespace ThreadInfo
 {
     __thread char t_errnobuf[512];
-    __thread char t_time[64];
+    __thread char t_time[128];
     __thread time_t t_lastSecond;
 };
 
@@ -66,13 +66,12 @@ Logger::Impl::Impl(Logger::LogLevel level, int savedErrno, const char* file, int
 // Timestamp::toString方法的思路，只不过这里需要输出到流
 void Logger::Impl::formatTime()
 {
-    Timestamp now = Timestamp::now();
-    time_t seconds = static_cast<time_t>(now.microSecondsSinceEpoch() / Timestamp::kMicroSecondsPerSecond);
-    int microseconds = static_cast<int>(now.microSecondsSinceEpoch() % Timestamp::kMicroSecondsPerSecond);
-
-    struct tm *tm_time = localtime(&seconds);
+    struct timeval tv;
+    gettimeofday(&tv, nullptr);  // 获取当前时间，包括秒和微秒
+    time_t now = tv.tv_sec;
+    struct tm* tm_time = localtime(&now);  // 非线程安全的 localtime
     // 写入此线程存储的时间buf中
-    snprintf(ThreadInfo::t_time, sizeof(ThreadInfo::t_time), "%4d/%02d/%02d %02d:%02d:%02d",
+    snprintf(ThreadInfo::t_time, sizeof(ThreadInfo::t_time), "%4d/%02d/%02d > %02d:%02d:%02d:",
         tm_time->tm_year + 1900,
         tm_time->tm_mon + 1,
         tm_time->tm_mday,
@@ -80,14 +79,13 @@ void Logger::Impl::formatTime()
         tm_time->tm_min,
         tm_time->tm_sec);
     // 更新最后一次时间调用
-    ThreadInfo::t_lastSecond = seconds;
+    ThreadInfo::t_lastSecond = now;
 
-    // muduo使用Fmt格式化整数，这里我们直接写入buf
+    // 格式化微秒部分
     char buf[32] = {0};
-    snprintf(buf, sizeof(buf), "%06d ", microseconds);
+    snprintf(buf, sizeof(buf), "%06ld ", tv.tv_usec);
 
-    // 输出时间，附有微妙(之前是(buf, 6),少了一个空格)
-    stream_ << GeneralTemplate(ThreadInfo::t_time, 17) << GeneralTemplate(buf, 7);
+    stream_ << GeneralTemplate(ThreadInfo::t_time, 22) << GeneralTemplate(buf, 7);
 }
 
 void Logger::Impl::finish()
@@ -144,5 +142,7 @@ void Logger::setFlush(FlushFunc flush)
 {
     g_flush = flush;
 }
+
+
 
 } // namespace symlog

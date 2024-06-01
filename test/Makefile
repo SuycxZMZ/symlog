@@ -8,7 +8,7 @@ CXXFLAGS = -std=c++17 -g -I/usr/local/include/symlog
 LDFLAGS = -L/usr/local/lib -lsymlog -lpthread
 
 # 源文件
-SRCS = 1.cc test.cc asynclogtest.cc
+SRCS = asynclogtest.cc
 
 # 目标文件夹
 BIN_DIR = bin

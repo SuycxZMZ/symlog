@@ -39,6 +39,7 @@ if [ ! -d "/usr/local/include/symlog" ]; then
 fi
 
 cp src/base/*.h /usr/local/include/symlog/
+cp src/log/*.h /usr/local/include/symlog/
 cp lib/*.so /usr/local/lib 
 
 echo "头文件和动态库文件已移动到 /usr/local/include/symlog 和 /usr/local/lib 目录下， \n

@@ -102,6 +102,7 @@ const char* getErrnoMsg(int savedErrno);
 #define LOG_WARN symlog::Logger(__FILE__, __LINE__, symlog::Logger::WARN).stream()
 #define LOG_ERROR symlog::Logger(__FILE__, __LINE__, symlog::Logger::ERROR).stream()
 #define LOG_FATAL symlog::Logger(__FILE__, __LINE__, symlog::Logger::FATAL).stream()
+
 } // namespace symlog
 
 

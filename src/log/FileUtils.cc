@@ -1,7 +1,5 @@
 #include "FileUtils.h"
-// #include "Logging.h"
-
-extern const char* getErrnoMsg(int savedErrno);
+#include "Logging.h"
 
 namespace symlog
 {

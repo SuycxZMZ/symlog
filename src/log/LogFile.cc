@@ -1,4 +1,7 @@
 #include "LogFile.h"
+#include <errno.h>
+#include <string.h>
+#include <stdio.h>
 
 namespace symlog
 {
@@ -97,4 +100,7 @@ std::string LogFile::getLogFileName(const std::string& basename, time_t* now)
     filename += ".log";
     return filename;
 }
+
+
+
 } // namespace symlog
