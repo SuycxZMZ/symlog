@@ -14,6 +14,7 @@
 
 namespace symlog
 {
+    
 std::shared_ptr<symlog::AsyncLogging> g_asyncLog;
 
 // static symlog::AsyncLogging* g_asyncLog = NULL;
