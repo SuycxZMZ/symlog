@@ -40,12 +40,6 @@ symlog::AsyncLogStart();
 - 移除boost，使用C++11编写，支持C++11特性
 - 使用简单
 
-## 遗留问题
-
-异步日志的滚动功能存在bug
-滚动大小没有按照预想的固定
-待解决...
-
 ## [设计](https://github.com/SuycxZMZ/tiny-muduo)
 
 ## [例子/测试](test/asynclogtest.cc)
