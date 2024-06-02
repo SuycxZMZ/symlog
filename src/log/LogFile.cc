@@ -73,7 +73,7 @@ bool LogFile::rollFile()
     std::string filename = getLogFileName(basename_, &now);
     // 计算现在是第几天 now/kRollPerSeconds求出现在是第几天，再乘以秒数相当于是当前天数0点对应的秒数
     time_t start = now / kRollPerSeconds_ * kRollPerSeconds_;
-    if (now > lastRoll_)
+    if (now > lastRoll_) 
     {
         lastRoll_ = now;
         lastFlush_ = now;

@@ -90,8 +90,11 @@ void Logger::Impl::formatTime()
 
 void Logger::Impl::finish()
 {
-    stream_ << " - " << GeneralTemplate(basename_.data_, basename_.size_) 
-            << ':' << line_ << '\n';
+    stream_ << " - " << GeneralTemplate(basename_.data_, basename_.size_)
+            << ':' << line_ << ":"
+            << GeneralTemplate(symlog::CurrentThread::tidString(), symlog::CurrentThread::tidStringLength())
+            << '\n';
+    std::string s(symlog::CurrentThread::tidString());
 }
 
 // level默认为INFO等级

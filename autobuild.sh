@@ -35,7 +35,6 @@ cd ..
 if [ ! -d "/usr/local/include/symlog" ]; then
   sudo mkdir -p /usr/local/include/symlog
   echo "创建 /usr/local/include/symlog 目录"
-
 fi
 
 cp src/base/*.h /usr/local/include/symlog/
@@ -44,3 +43,5 @@ cp lib/*.so /usr/local/lib
 
 echo "头文件和动态库文件已移动到 /usr/local/include/symlog 和 /usr/local/lib 目录下， \n
 symlog库已完成安装！！！"
+
+ldconfig

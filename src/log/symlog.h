@@ -21,16 +21,24 @@ std::shared_ptr<symlog::AsyncLogging> g_asyncLog;
 
 void asyncLog(const char* msg, int len)
 {
-    if (g_asyncLog)
+    if (symlog::g_asyncLog)
     {
-        g_asyncLog->append(msg, len);
+        symlog::g_asyncLog->append(msg, len);
     }
 }
 
 void initAsyncLogging(const char* filename, const off_t RollSize)
 {
-    g_asyncLog.reset(new symlog::AsyncLogging(filename, RollSize));
+    symlog::g_asyncLog.reset(new symlog::AsyncLogging(filename, RollSize));
     symlog::Logger::setOutput(symlog::asyncLog);
+}
+
+void AsyncLogStart()
+{
+    if (g_asyncLog) 
+    {
+        g_asyncLog->start();
+    }
 }
 
 }
