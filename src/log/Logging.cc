@@ -1,5 +1,7 @@
 #include "Logging.h"
 #include "CurrentThread.h"
+#include "TimeStamp.h"
+#include "TimeZone.h"
 
 namespace symlog
 {
@@ -9,6 +11,27 @@ namespace ThreadInfo
     __thread char t_time[128];
     __thread time_t t_lastSecond;
 };
+
+// helper class for known string length at compile time
+class T
+{
+ public:
+  T(const char* str, unsigned len)
+    :str_(str),
+     len_(len)
+  {
+    assert(strlen(str) == len_);
+  }
+
+  const char* str_;
+  const unsigned len_;
+};
+
+inline LogStream& operator<<(LogStream& s, T v)
+{
+  s.append(v.str_, v.len_);
+  return s;
+}
 
 const char* getErrnoMsg(int savedErrno)
 {
@@ -45,6 +68,7 @@ static void defaultFlush()
 
 Logger::OutputFunc g_output = defaultOutput;
 Logger::FlushFunc g_flush = defaultFlush;
+TimeZone g_logTimeZone;
 
 Logger::Impl::Impl(Logger::LogLevel level, int savedErrno, const char* file, int line)
     : time_(Timestamp::now()),
@@ -54,7 +78,7 @@ Logger::Impl::Impl(Logger::LogLevel level, int savedErrno, const char* file, int
       basename_(file)
 {
     // 输出流 -> time
-    formatTime();
+    formatTime2();
     // 写入日志等级
     stream_ << GeneralTemplate(getLevelName[level], 6);
     if (savedErrno != 0)
@@ -63,13 +87,12 @@ Logger::Impl::Impl(Logger::LogLevel level, int savedErrno, const char* file, int
     }
 }
 
-// Timestamp::toString方法的思路，只不过这里需要输出到流
 void Logger::Impl::formatTime()
 {
     struct timeval tv;
     gettimeofday(&tv, nullptr);  // 获取当前时间，包括秒和微秒
     time_t now = tv.tv_sec;
-    struct tm* tm_time = localtime(&now);  // 非线程安全的 localtime
+    struct tm* tm_time = localtime(&now);  
     // 写入此线程存储的时间buf中
     snprintf(ThreadInfo::t_time, sizeof(ThreadInfo::t_time), "%4d/%02d/%02d > %02d:%02d:%02d:",
         tm_time->tm_year + 1900,
@@ -88,13 +111,50 @@ void Logger::Impl::formatTime()
     stream_ << GeneralTemplate(ThreadInfo::t_time, 22) << GeneralTemplate(buf, 7);
 }
 
+void Logger::Impl::formatTime2()
+{
+  int64_t microSecondsSinceEpoch = time_.microSecondsSinceEpoch();
+  time_t seconds = static_cast<time_t>(microSecondsSinceEpoch / Timestamp::kMicroSecondsPerSecond);
+  int microseconds = static_cast<int>(microSecondsSinceEpoch % Timestamp::kMicroSecondsPerSecond);
+  if (seconds != ThreadInfo::t_lastSecond)
+  {
+    ThreadInfo::t_lastSecond = seconds;
+    struct DateTime dt;
+    if (g_logTimeZone.valid())
+    {
+      dt = g_logTimeZone.toLocalTime(seconds);
+    }
+    else
+    {
+      dt = TimeZone::toUtcTime(seconds);
+    }
+
+    int len = snprintf(ThreadInfo::t_time, sizeof(ThreadInfo::t_time), "%4d%02d%02d %02d:%02d:%02d",
+        dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second);
+    assert(len == 17); (void)len;
+  }
+
+  if (g_logTimeZone.valid())
+  {
+    Fmt us(".%06d ", microseconds);
+    assert(us.length() == 8);
+    stream_ << T(ThreadInfo::t_time, 17) << T(us.data(), 8);
+  }
+  else
+  {
+    Fmt us(".%06dZ ", microseconds);
+    assert(us.length() == 9);
+    stream_ << T(ThreadInfo::t_time, 17) << T(us.data(), 9);
+  }
+}
+
 void Logger::Impl::finish()
 {
     stream_ << " - " << GeneralTemplate(basename_.data_, basename_.size_)
             << ':' << line_ << ":"
             << GeneralTemplate(symlog::CurrentThread::tidString(), symlog::CurrentThread::tidStringLength())
             << '\n';
-    std::string s(symlog::CurrentThread::tidString());
+    // std::string s(symlog::CurrentThread::tidString());
 }
 
 // level默认为INFO等级

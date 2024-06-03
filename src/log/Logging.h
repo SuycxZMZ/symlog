@@ -72,6 +72,7 @@ private:
         using LogLevel = Logger::LogLevel;
         Impl(LogLevel level, int savedErrno, const char* file, int line);
         void formatTime();
+        void formatTime2();
         void finish();
 
         Timestamp time_;
