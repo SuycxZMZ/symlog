@@ -58,3 +58,15 @@ symlog::AsyncLogStart();
 ## [设计](https://github.com/SuycxZMZ/tiny-muduo)
 
 ## [例子/测试](test/asynclogtest.cc)
+
+**参考 && 致谢 ：**
+
+https://github.com/chenshuo/muduo
+
+https://blog.csdn.net/T_Solotov/article/details/124044175
+
+https://zhuanlan.zhihu.com/p/636581210
+
+https://github.com/Shangyizhou/A-Tiny-Network-Library
+
+https://www.cnblogs.com/tuilk/p/16793625.html
