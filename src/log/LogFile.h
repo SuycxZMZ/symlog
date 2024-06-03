@@ -3,26 +3,21 @@
 
 #include "FileUtils.h"
 
-#include <mutex>
 #include <memory>
+#include <mutex>
 
-namespace symlog
-{
+namespace symlog {
 
-class LogFile
-{
-public:
-    LogFile(const std::string& basename,
-            off_t rollSize,
-            int flushInterval = 3,
-            int checkEveryN = 1024);
+class LogFile {
+   public:
+    LogFile(const std::string& basename, off_t rollSize, int flushInterval = 3, int checkEveryN = 1024);
     ~LogFile();
 
     void append(const char* data, int len);
     void flush();
-    bool rollFile(); // 滚动日志
+    bool rollFile();  // 滚动日志
 
-private:
+   private:
     static std::string getLogFileName(const std::string& basename, time_t* now);
     void appendInLock(const char* data, int len);
 
@@ -39,9 +34,8 @@ private:
     time_t lastFlush_;
     std::unique_ptr<FileUtil> file_;
 
-    const static int kRollPerSeconds_ = 60*60*24;
+    const static int kRollPerSeconds_ = 60 * 60 * 24;
 };
-} // namespace symlog
+}  // namespace symlog
 
-
-#endif // LOG_FILE_H
+#endif  // LOG_FILE_H

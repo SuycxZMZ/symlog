@@ -4,11 +4,9 @@
 #include <stdio.h>
 #include <string>
 
-namespace symlog
-{
-class FileUtil
-{
-public:
+namespace symlog {
+class FileUtil {
+   public:
     explicit FileUtil(std::string& fileName);
     ~FileUtil();
 
@@ -18,14 +16,13 @@ public:
 
     off_t writtenBytes() const { return writtenBytes_; }
 
-private:    
+   private:
     size_t write(const char* data, size_t len);
-    
+
     FILE* fp_;
-    char buffer_[64 * 1024]; // fp_的缓冲区
-    off_t writtenBytes_; // off_t用于指示文件的偏移量
+    char buffer_[64 * 1024];  // fp_的缓冲区
+    off_t writtenBytes_;      // off_t用于指示文件的偏移量
 };
-} // namespace symlog
+}  // namespace symlog
 
-
-#endif // FILE_UTIL_H
+#endif  // FILE_UTIL_H

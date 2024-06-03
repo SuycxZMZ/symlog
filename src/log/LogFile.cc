@@ -1,14 +1,10 @@
 #include "LogFile.h"
 #include <errno.h>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
-namespace symlog
-{
-LogFile::LogFile(const std::string& basename,
-        off_t rollSize,
-        int flushInterval,
-        int checkEveryN)
+namespace symlog {
+LogFile::LogFile(const std::string& basename, off_t rollSize, int flushInterval, int checkEveryN)
     : basename_(basename),
       rollSize_(rollSize),
       flushInterval_(flushInterval),
@@ -17,41 +13,31 @@ LogFile::LogFile(const std::string& basename,
       mutex_(new std::mutex),
       startOfPeriod_(0),
       lastRoll_(0),
-      lastFlush_(0)
-{
-    rollFile(); // 每次刷新都尝试 roll 一下
+      lastFlush_(0) {
+    rollFile();  // 每次刷新都尝试 roll 一下
 }
 
 LogFile::~LogFile() = default;
 
-void LogFile::append(const char* data, int len)
-{
+void LogFile::append(const char* data, int len) {
     std::lock_guard<std::mutex> lock(*mutex_);
     appendInLock(data, len);
 }
 
-void LogFile::appendInLock(const char* data, int len)
-{
+void LogFile::appendInLock(const char* data, int len) {
     file_->append(data, len);
 
-    if (file_->writtenBytes() > rollSize_)
-    {
+    if (file_->writtenBytes() > rollSize_) {
         rollFile();
-    }
-    else
-    {
+    } else {
         ++count_;
-        if (count_ >= checkEveryN_)
-        {
+        if (count_ >= checkEveryN_) {
             count_ = 0;
             time_t now = ::time(NULL);
             time_t thisPeriod = now / kRollPerSeconds_ * kRollPerSeconds_;
-            if (thisPeriod != startOfPeriod_)
-            {
+            if (thisPeriod != startOfPeriod_) {
                 rollFile();
-            }
-            else if (now - lastFlush_ > flushInterval_)
-            {
+            } else if (now - lastFlush_ > flushInterval_) {
                 lastFlush_ = now;
                 file_->flush();
             }
@@ -59,22 +45,16 @@ void LogFile::appendInLock(const char* data, int len)
     }
 }
 
-
-void LogFile::flush()
-{
-    file_->flush();
-}
+void LogFile::flush() { file_->flush(); }
 
 // 滚动日志
 // basename + time + hostname + pid + ".log"
-bool LogFile::rollFile()
-{
+bool LogFile::rollFile() {
     time_t now = 0;
     std::string filename = getLogFileName(basename_, &now);
     // 计算现在是第几天 now/kRollPerSeconds求出现在是第几天，再乘以秒数相当于是当前天数0点对应的秒数
     time_t start = now / kRollPerSeconds_ * kRollPerSeconds_;
-    if (now > lastRoll_) 
-    {
+    if (now > lastRoll_) {
         lastRoll_ = now;
         lastFlush_ = now;
         startOfPeriod_ = start;
@@ -85,8 +65,7 @@ bool LogFile::rollFile()
     return false;
 }
 
-std::string LogFile::getLogFileName(const std::string& basename, time_t* now)
-{
+std::string LogFile::getLogFileName(const std::string& basename, time_t* now) {
     std::string filename;
     filename.reserve(basename.size() + 64);
     filename = basename;
@@ -101,6 +80,4 @@ std::string LogFile::getLogFileName(const std::string& basename, time_t* now)
     return filename;
 }
 
-
-
-} // namespace symlog
+}  // namespace symlog

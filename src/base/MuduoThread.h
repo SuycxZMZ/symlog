@@ -1,22 +1,20 @@
 #ifndef MUDUOTHREAD_H
 #define MUDUOTHREAD_H
 
-#include <thread>
+#include <unistd.h>
+#include <atomic>
 #include <functional>
 #include <memory>
 #include <string>
-#include <unistd.h>
-#include <atomic>
+#include <thread>
 
 #include "noncopyable.h"
 
-namespace symlog
-{
-class muduoThread : noncopyable
-{
-public:
+namespace symlog {
+class muduoThread : noncopyable {
+   public:
     using ThreadFunc = std::function<void()>;
-    explicit muduoThread(ThreadFunc func, const std::string & name = std::string());
+    explicit muduoThread(ThreadFunc func, const std::string& name = std::string());
     ~muduoThread();
 
     void start();
@@ -24,9 +22,10 @@ public:
 
     bool started() const { return m_started; }
     pid_t tid() const { return m_tid; }
-    const std::string & name() const { return m_name; }
+    const std::string& name() const { return m_name; }
     static int numCreate() { return m_numCreate; }
-private:
+
+   private:
     void setDefaultName();
     bool m_started;
     bool m_joined;
@@ -36,7 +35,6 @@ private:
     static std::atomic_int m_numCreate;
     std::string m_name;
 };
-} // namespace symlog
-
+}  // namespace symlog
 
 #endif

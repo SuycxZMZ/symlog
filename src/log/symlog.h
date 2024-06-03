@@ -2,45 +2,39 @@
 #ifndef SYMLOG_H
 #define SYMLOG_H
 
-#include "Logging.h"
-#include "LogStream.h"
-#include "LogFile.h"
 #include "AsyncLogging.h"
-#include "TimeStamp.h"
-#include "MuduoThread.h"
 #include "CurrentThread.h"
+#include "LogFile.h"
+#include "LogStream.h"
+#include "Logging.h"
+#include "MuduoThread.h"
+#include "TimeStamp.h"
 
 #include <memory>
 
-namespace symlog
-{
-    
+namespace symlog {
+
 std::shared_ptr<symlog::AsyncLogging> g_asyncLog;
 
 // static symlog::AsyncLogging* g_asyncLog = NULL;
 
-void asyncLog(const char* msg, int len)
-{
-    if (symlog::g_asyncLog)
-    {
+void asyncLog(const char* msg, int len) {
+    if (symlog::g_asyncLog) {
         symlog::g_asyncLog->append(msg, len);
     }
 }
 
-void initAsyncLogging(const char* filename, const off_t RollSize)
-{
+void initAsyncLogging(const char* filename, const off_t RollSize) {
     symlog::g_asyncLog.reset(new symlog::AsyncLogging(filename, RollSize));
     symlog::Logger::setOutput(symlog::asyncLog);
 }
 
-void AsyncLogStart()
-{
-    if (g_asyncLog) 
-    {
+void AsyncLogStart() {
+    if (g_asyncLog) {
         g_asyncLog->start();
     }
 }
 
-}
+}  // namespace symlog
 
 #endif

@@ -6,33 +6,24 @@
 
 #include <string>
 
-namespace symlog
-{
+namespace symlog {
 /**
  * @brief 比如SourceFile类和时间类就会用到 const char* data_; int size_;
-*/
-class GeneralTemplate : noncopyable
-{
-public:
-    GeneralTemplate()
-        : data_(nullptr),
-          len_(0)
-    {}
+ */
+class GeneralTemplate : noncopyable {
+   public:
+    GeneralTemplate() : data_(nullptr), len_(0) {}
 
-    explicit GeneralTemplate(const char* data, int len)
-        : data_(data),
-          len_(len)
-    {}
+    explicit GeneralTemplate(const char* data, int len) : data_(data), len_(len) {}
 
     const char* data_;
     int len_;
 };
 
-class LogStream : noncopyable
-{
-public:
+class LogStream : noncopyable {
+   public:
     using Buffer = FixedBuffer<kSmallBuffer>;
-    
+
     void append(const char* data, int len) { buffer_.append(data, len); }
     const Buffer& buffer() const { return buffer_; }
     void resetBuffer() { buffer_.reset(); }
@@ -62,7 +53,7 @@ public:
     // (const char*, int)的重载
     LogStream& operator<<(const GeneralTemplate& g);
 
-private:
+   private:
     static const int kMaxNumericSize = 48;
 
     // 对于整型需要特殊处理
@@ -72,21 +63,20 @@ private:
     Buffer buffer_;
 };
 
-class Fmt // : noncopyable
+class Fmt  // : noncopyable
 {
- public:
-  template<typename T>
-  Fmt(const char* fmt, T val);
+   public:
+    template <typename T>
+    Fmt(const char* fmt, T val);
 
-  const char* data() const { return buf_; }
-  int length() const { return length_; }
+    const char* data() const { return buf_; }
+    int length() const { return length_; }
 
- private:
-  char buf_[32];
-  int length_;
+   private:
+    char buf_[32];
+    int length_;
 };
 
-} // namespace symlog
+}  // namespace symlog
 
-
-#endif // LOG_STREAM_H
+#endif  // LOG_STREAM_H

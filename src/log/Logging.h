@@ -1,28 +1,23 @@
 #ifndef LOGGING_H
 #define LOGGING_H
 
-#include "TimeStamp.h"
 #include "LogStream.h"
+#include "TimeStamp.h"
 
-#include <stdio.h>
-#include <sys/time.h>
 #include <errno.h>
+#include <stdio.h>
 #include <string.h>
+#include <sys/time.h>
 #include <functional>
 
-namespace symlog
-{
+namespace symlog {
 // SourceFile的作用是提取文件名
-class SourceFile
-{
-public:
-    explicit SourceFile(const char* filename)
-        : data_(filename)
-    {
+class SourceFile {
+   public:
+    explicit SourceFile(const char* filename) : data_(filename) {
         // 找出data中出现 "/" 最后一次的位置，从而获取具体的文件名
         const char* slash = strrchr(filename, '/');
-        if (slash)
-        {
+        if (slash) {
             data_ = slash + 1;
         }
         size_ = static_cast<int>(strlen(data_));
@@ -32,11 +27,9 @@ public:
     int size_;
 };
 
-class Logger
-{
-public:
-    enum LogLevel
-    {
+class Logger {
+   public:
+    enum LogLevel {
         TRACE,
         DEBUG,
         INFO,
@@ -64,11 +57,10 @@ public:
     static void setOutput(OutputFunc);
     static void setFlush(FlushFunc);
 
-private:
+   private:
     // 内部类
-    class Impl
-    {
-    public:
+    class Impl {
+       public:
         using LogLevel = Logger::LogLevel;
         Impl(LogLevel level, int savedErrno, const char* file, int line);
         void formatTime();
@@ -88,23 +80,20 @@ private:
 
 extern Logger::LogLevel g_logLevel;
 
-inline Logger::LogLevel logLevel()
-{
-    return g_logLevel;
-}
+inline Logger::LogLevel logLevel() { return g_logLevel; }
 
 // 获取errno信息
 const char* getErrnoMsg(int savedErrno);
 
-#define LOG_DEBUG if (symlog::logLevel() <= symlog::Logger::DEBUG) \
-  symlog::Logger(__FILE__, __LINE__, symlog::Logger::DEBUG, __func__).stream()
-#define LOG_INFO if (symlog::logLevel() <= symlog::Logger::INFO) \
-  symlog::Logger(__FILE__, __LINE__).stream()
+#define LOG_DEBUG                                    \
+    if (symlog::logLevel() <= symlog::Logger::DEBUG) \
+    symlog::Logger(__FILE__, __LINE__, symlog::Logger::DEBUG, __func__).stream()
+#define LOG_INFO \
+    if (symlog::logLevel() <= symlog::Logger::INFO) symlog::Logger(__FILE__, __LINE__).stream()
 #define LOG_WARN symlog::Logger(__FILE__, __LINE__, symlog::Logger::WARN).stream()
 #define LOG_ERROR symlog::Logger(__FILE__, __LINE__, symlog::Logger::ERROR).stream()
 #define LOG_FATAL symlog::Logger(__FILE__, __LINE__, symlog::Logger::FATAL).stream()
 
-} // namespace symlog
+}  // namespace symlog
 
-
-#endif // LOGGING_H
+#endif  // LOGGING_H

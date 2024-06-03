@@ -1,30 +1,23 @@
 #ifndef FIXED_BUFFER_H
 #define FIXED_BUFFER_H
 
-#include "noncopyable.h"
 #include <assert.h>
-#include <string.h> // memcpy
+#include <string.h>  // memcpy
 #include <strings.h>
 #include <string>
+#include "noncopyable.h"
 
-namespace symlog
-{
+namespace symlog {
 const int kSmallBuffer = 4000;
-const int kLargeBuffer = 4000*1000; 
+const int kLargeBuffer = 4000 * 1000;
 
 template <int SIZE>
-class FixedBuffer : noncopyable
-{
-public:
-    FixedBuffer()
-        : cur_(data_)
-    {
-    }
+class FixedBuffer : noncopyable {
+   public:
+    FixedBuffer() : cur_(data_) {}
 
-    void append(const char* buf, size_t len)
-    {
-        if (static_cast<size_t>(avail()) > len)
-        {
+    void append(const char* buf, size_t len) {
+        if (static_cast<size_t>(avail()) > len) {
             memcpy(cur_, buf, len);
             cur_ += len;
         }
@@ -42,13 +35,12 @@ public:
 
     std::string toString() const { return std::string(data_, length()); }
 
-private:
+   private:
     const char* end() const { return data_ + sizeof(data_); }
 
     char data_[SIZE];
-    char* cur_; 
+    char* cur_;
 };
-} // namespace symlog
+}  // namespace symlog
 
-
-#endif // FIXED_BUFFER_H
+#endif  // FIXED_BUFFER_H
