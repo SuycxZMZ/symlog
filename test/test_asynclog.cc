@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
     printf("pid = %d\n", getpid());
     test_SyncLogging();
 
-    symlog::initAsyncLogging(::basename(argv[0]), 1024 * 1024 * 50);
+    symlog::initAsyncLogging(::basename(argv[0]), 1024 * 1024 * 500);
     symlog::AsyncLogStart();
 
     timeLogger.time1 = std::chrono::high_resolution_clock::now();
