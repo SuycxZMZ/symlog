@@ -29,7 +29,7 @@ public:
         double rate = total_size / duration.count();
         printf("Total log size: %zu bytes\n", total_size);
         printf("Logging 2000000 entries took %f seconds\n", duration.count());
-        printf("Rate: %.6f bytes/second\n", rate);
+        printf("Rate: %.6f MB/second\n", rate/(1024 * 1024));
     }
 public:
     std::chrono::high_resolution_clock::time_point time1;

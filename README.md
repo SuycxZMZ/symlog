@@ -42,8 +42,11 @@ symlog::AsyncLogStart();
     
     测试结果：
         单独起2个线程，每个线程不间断生成1000000条日志
-        每条日志 80 字节
-        测试结果 花费 0.939s 左右，速度 343MB/s
+        每条日志 80 字节左右
+        
+        Total log size: 168405455 bytes
+        Logging 2000000 entries took 0.987152 seconds
+        Rate: 162.694227 MB/second
 
 ## 特点
 
