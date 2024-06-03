@@ -48,6 +48,10 @@ symlog::AsyncLogStart();
         Logging 2000000 entries took 0.987152 seconds
         Rate: 162.694227 MB/second
 
+对比常见[webser](https://github.com/qinguoyi/TinyWebServer)中以阻塞队列方式实现的异步日志，性能提升一个数量级。
+
+对其做同样的2000000条日志，花费时间为 14.25s
+
 ## 特点
 
 - 只包含日志相关的代码，编译速度快
