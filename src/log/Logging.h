@@ -85,6 +85,8 @@ inline Logger::LogLevel logLevel() { return g_logLevel; }
 // 获取errno信息
 const char* getErrnoMsg(int savedErrno);
 
+}  // namespace symlog
+
 #define LOG_DEBUG                                    \
     if (symlog::logLevel() <= symlog::Logger::DEBUG) \
     symlog::Logger(__FILE__, __LINE__, symlog::Logger::DEBUG, __func__).stream()
@@ -93,7 +95,5 @@ const char* getErrnoMsg(int savedErrno);
 #define LOG_WARN symlog::Logger(__FILE__, __LINE__, symlog::Logger::WARN).stream()
 #define LOG_ERROR symlog::Logger(__FILE__, __LINE__, symlog::Logger::ERROR).stream()
 #define LOG_FATAL symlog::Logger(__FILE__, __LINE__, symlog::Logger::FATAL).stream()
-
-}  // namespace symlog
 
 #endif  // LOGGING_H

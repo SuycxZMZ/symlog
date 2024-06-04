@@ -21,6 +21,12 @@ mkdir lib
 echo "创建 lib 目录"
 fi
 
+# 检查 test 文件夹下是否存在 bin 目录，如果不存在则创建
+if [ ! -d "test/bin" ]; then
+  mkdir test/bin
+  echo "创建 test/bin 目录"
+fi
+
 cd build
 cmake ..
 echo "CMake 配置完成"
@@ -30,7 +36,6 @@ cd ..
 
 # 将所有的头文件移动到 /usr/loacl/include/symlog 目录下
 # 将生成的动态库文件移动到 /usr/loacl/lib 目录下
-
 # 检查 /usr/local/include/symlog 目录是否存在，如果不存在则创建
 if [ ! -d "/usr/local/include/symlog" ]; then
   sudo mkdir -p /usr/local/include/symlog
