@@ -24,7 +24,7 @@ fi
 cd build
 cmake ..
 echo "CMake 配置完成"
-make
+make -j4
 echo "编译完成"
 cd ..
 
