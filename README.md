@@ -13,9 +13,12 @@
 
     git clone https://github.com/SuycxZMZ/symlog.git
     cd symlog
-    sudo bash autobuild.sh
-
-    安装完成之后会有打印提示
+    mkdir build
+    cd build
+    cmake ..
+    make -j4
+    sudo make install
+    sudo ldconfig
 
 ### 使用
 
